@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 
@@ -10,7 +11,6 @@ const database = {
       id: '123',
       name: 'John',
       email: 'john@gmail.com',
-      password: 'cookies',
       entries: 0,
       joined: new Date()
     },
@@ -18,9 +18,15 @@ const database = {
       id: '124',
       name: 'Sally',
       email: 'Sally@gmail.com',
-      password: 'bananas',
       entries: 0,
       joined: new Date()
+    }
+  ],
+  login: [
+    {
+      id: '987',
+      hash: '',
+      email: 'john@gmail.com '
     }
   ]
 };
@@ -30,16 +36,28 @@ app.get('/', (req, res) => {
 })
 
 app.post('/signin', (req, res) => {
+  bcrypt.compare("apples", "$2a$10$6d8hg/HZu0DYR29xU5MpC.SGgYcTRBJof9BmTSeibZQRWQyrxamFS", function(err, res) {
+    console.log('salt = 10 => ', res);
+  });
+  bcrypt.compare("apple", "$2a$08$CvdaBfPR6KPcZYCPWjzJleL/PP5tSRK0fISoZuDyx3R7KXISOjNx6", function(err, res) {
+    console.log('salt = 8 => ', res);
+  });
+  bcrypt.compare("haha", "$2a$04$v5upASuL6feCmY03y7ti6eYE2BDRWVXkMkvHGcrIN5FsdmsU2/K1W", function(err, res) {
+    console.log('salt = 1 => ', res);
+  });
   if(req.body.email === database.users[0].email &&
      req.body.password === database.users[0].password) {
     res.json('sccess');
   } else {
-    res.status(400).json('error logging in'); 
+    res.status(400).json('error logging in');
   }
 })
 
 app.post('/register', (req, res) => {
   const {name, email, password} = req.body;
+  bcrypt.hash(password, 10, function(err, hash) {
+    console.log(hash);
+  });
   database.users.push({
     id: '125',
     name: name,
