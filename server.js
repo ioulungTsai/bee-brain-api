@@ -1,15 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
+const cors = require('cors');
 
 const app = express();
 
-app.use(bodyParser.json());
 const database = {
   users: [
     {
       id: '123',
       name: 'John',
+      password: 'cookies',
       email: 'john@gmail.com',
       entries: 0,
       joined: new Date()
@@ -17,6 +18,7 @@ const database = {
     {
       id: '124',
       name: 'Sally',
+      password: 'bananas',
       email: 'Sally@gmail.com',
       entries: 0,
       joined: new Date()
@@ -31,23 +33,26 @@ const database = {
   ]
 };
 
+app.use(bodyParser.json());
+app.use(cors());
+
 app.get('/', (req, res) => {
   res.send(database.users)
 })
 
 app.post('/signin', (req, res) => {
-  bcrypt.compare("apples", "$2a$10$6d8hg/HZu0DYR29xU5MpC.SGgYcTRBJof9BmTSeibZQRWQyrxamFS", function(err, res) {
-    console.log('salt = 10 => ', res);
-  });
-  bcrypt.compare("apple", "$2a$08$CvdaBfPR6KPcZYCPWjzJleL/PP5tSRK0fISoZuDyx3R7KXISOjNx6", function(err, res) {
-    console.log('salt = 8 => ', res);
-  });
-  bcrypt.compare("haha", "$2a$04$v5upASuL6feCmY03y7ti6eYE2BDRWVXkMkvHGcrIN5FsdmsU2/K1W", function(err, res) {
-    console.log('salt = 1 => ', res);
-  });
+  // bcrypt.compare("apples", "$2a$10$6d8hg/HZu0DYR29xU5MpC.SGgYcTRBJof9BmTSeibZQRWQyrxamFS", function(err, res) {
+  //   console.log('salt = 10 => ', res);
+  // });
+  // bcrypt.compare("apple", "$2a$08$CvdaBfPR6KPcZYCPWjzJleL/PP5tSRK0fISoZuDyx3R7KXISOjNx6", function(err, res) {
+  //   console.log('salt = 8 => ', res);
+  // });
+  // bcrypt.compare("haha", "$2a$04$v5upASuL6feCmY03y7ti6eYE2BDRWVXkMkvHGcrIN5FsdmsU2/K1W", function(err, res) {
+  //   console.log('salt = 1 => ', res);
+  // });
   if(req.body.email === database.users[0].email &&
      req.body.password === database.users[0].password) {
-    res.json('sccess');
+    res.json('success');
   } else {
     res.status(400).json('error logging in');
   }
